@@ -2,22 +2,29 @@ package entities;
 
 import entities.enums.ItemState;
 import jakarta.persistence.*;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Item {
+@Entity
+@Table(name = "tb_item")
+public class Item implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     private String title;
 
     @Enumerated(EnumType.STRING)
     private ItemState state;
-    
+
     private boolean isHighlighted;
+
+    @ManyToOne
+    @JoinColumn(name = "taskList_id")
+    private TaskList taskList;
 
     public Item(){}
 
@@ -49,6 +56,14 @@ public class Item {
 
     public void setHighlighted(boolean highlighted) {
         isHighlighted = highlighted;
+    }
+
+    public TaskList getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(TaskList taskList) {
+        this.taskList = taskList;
     }
 
     @Override
