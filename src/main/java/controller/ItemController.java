@@ -49,6 +49,12 @@ public class ItemController {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id").buildAndExpand(item.getId()).toUri();
         return ResponseEntity.created(uri).body(new ItemDto(item));
     }
+    @PutMapping("/{id}/prioritize")
+    public ResponseEntity<ItemDto> prioritizeItem(@PathVariable Long id){
+        Item updatedItem = itemService.prioritizeItem(id);
+        ItemDto itemDto = new ItemDto(updatedItem);
+        return ResponseEntity.ok().body(itemDto);
+    }
     @PutMapping(value = "/{id}")
     public ResponseEntity<ItemDto> update(@PathVariable Long id, @RequestBody ItemDto itemDto){
         Item obj = itemService.update(id, itemDto);
@@ -59,6 +65,13 @@ public class ItemController {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         itemService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping(value = "/filter")
+    public ResponseEntity<List<ItemDto>> filterItems(@RequestParam String status, @RequestParam Long taskListId){
+        List<Item> itemList = itemService.getItemByStatusAndTaskList(status, taskListId);
+        List<ItemDto> itemDtosList = itemList.stream()
+                .map(ItemDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok().body(itemDtosList);
     }
 
 }

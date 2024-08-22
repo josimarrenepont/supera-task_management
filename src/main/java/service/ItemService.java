@@ -17,7 +17,7 @@ public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
 
-    public List<Item> findAll(){
+    public List<Item> findAll() {
         return itemRepository.findAll();
     }
 
@@ -51,9 +51,19 @@ public class ItemService {
 
     private void updateData(Item entity, ItemDto itemDto) {
         entity.setTitle(itemDto.getTitle());
+        entity.setHighlighted(itemDto.isHighlighted());
     }
 
     public void delete(Long id) {
         itemRepository.deleteById(id);
+    }
+
+    public Item prioritizeItem(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow();
+        item.setHighlighted(true);
+        return itemRepository.save(item);
+    }
+    public List<Item> getItemByStatusAndTaskList(String status, Long taskListsId){
+        return itemRepository.findByTaskListAndStatus(taskListsId, status);
     }
 }
