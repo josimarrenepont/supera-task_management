@@ -2,10 +2,15 @@ package service;
 
 import entities.Item;
 import entities.TaskList;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import repository.ItemRepository;
 import repository.TaskListRepository;
+import service.exceptions.DatabaseExceptions;
+import service.exceptions.ResourceNotFoundExceptions;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +48,11 @@ public class TaskListService {
         return taskListRepository.findAll();
     }
 
+    public TaskList findById(Long id) {
+        Optional<TaskList> obj = taskListRepository.findById(id);
+        return obj.orElseThrow(() -> new ResourceNotFoundExceptions(id));
+    }
+
     public TaskList insert(TaskList obj) {
         TaskList taskList = new TaskList();
         taskList.setTitle(obj.getTitle());
@@ -52,9 +62,13 @@ public class TaskListService {
     }
 
     public TaskList update(Long id, TaskList obj) {
-        TaskList entity = taskListRepository.getReferenceById(id);
-        updateData(entity, obj);
-        return taskListRepository.save(entity);
+        try {
+            TaskList entity = taskListRepository.getReferenceById(id);
+            updateData(entity, obj);
+            return taskListRepository.save(entity);
+        }catch (EntityNotFoundException e){
+            throw new ResourceNotFoundExceptions(id);
+        }
     }
 
     private void updateData(TaskList entity, TaskList obj) {
@@ -63,11 +77,12 @@ public class TaskListService {
     }
 
     public void delete(Long id) {
-        taskListRepository.deleteById(id);
-    }
-
-    public TaskList findById(Long id) {
-        Optional<TaskList> obj = taskListRepository.findById(id);
-        return obj.orElseThrow();
+        try {
+            taskListRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new ResourceNotFoundExceptions(id);
+        }catch (DataIntegrityViolationException e){
+            throw new DatabaseExceptions(e.getMessage());
+        }
     }
 }

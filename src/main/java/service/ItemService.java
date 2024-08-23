@@ -2,9 +2,14 @@ package service;
 
 import entities.Item;
 import entities.dto.ItemDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import repository.ItemRepository;
+import service.exceptions.DatabaseExceptions;
+import service.exceptions.ResourceNotFoundExceptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +28,7 @@ public class ItemService {
 
     public Item findById(Long id) {
         Optional<Item> obj = itemRepository.findById(id);
-        return obj.orElseThrow();
+        return obj.orElseThrow(() -> new ResourceNotFoundExceptions(id));
     }
 
     public List<Item> findItem(String title) {
@@ -44,9 +49,13 @@ public class ItemService {
     }
 
     public Item update(Long id, ItemDto itemDto) {
-        Item entity = itemRepository.getReferenceById(id);
-        updateData(entity, itemDto);
-        return itemRepository.save(entity);
+        try {
+            Item entity = itemRepository.getReferenceById(id);
+            updateData(entity, itemDto);
+            return itemRepository.save(entity);
+        }catch (EntityNotFoundException e){
+            throw new ResourceNotFoundExceptions(id);
+        }
     }
 
     private void updateData(Item entity, ItemDto itemDto) {
@@ -55,15 +64,25 @@ public class ItemService {
     }
 
     public void delete(Long id) {
-        itemRepository.deleteById(id);
+        try {
+            itemRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new ResourceNotFoundExceptions(id);
+        }catch (DataIntegrityViolationException e){
+            throw new DatabaseExceptions(e.getMessage());
+        }
     }
 
     public Item prioritizeItem(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow();
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ResourceNotFoundExceptions(itemId));
         item.setHighlighted(true);
         return itemRepository.save(item);
     }
     public List<Item> getItemByStatusAndTaskList(String status, Long taskListsId){
-        return itemRepository.findByTaskListAndStatus(taskListsId, status);
+        try {
+            return itemRepository.findByTaskListAndStatus(taskListsId, status);
+        } catch(EmptyResultDataAccessException e){
+            throw new DatabaseExceptions(e.getMessage());
+        }
     }
 }
