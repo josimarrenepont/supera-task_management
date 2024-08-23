@@ -2,8 +2,6 @@ package entities;
 
 import entities.enums.ItemState;
 import jakarta.persistence.*;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -22,7 +20,8 @@ public class Item implements Serializable {
 
     private boolean isHighlighted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.PERSIST)
+    //@JoinTable(name = "taskList_items", joinColumns = @JoinColumn(name = "items_id"), inverseJoinColumns = @JoinColumn(name = "taskLists_id"))
     @JoinColumn(name = "taskList_id")
     private TaskList taskList;
 
@@ -69,12 +68,13 @@ public class Item implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Item item)) return false;
-        return isHighlighted() == item.isHighlighted() && Objects.equals(getId(), item.getId()) && Objects.equals(getTitle(), item.getTitle());
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return id != null && id.equals(item.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), isHighlighted());
+        return Objects.hash(id);
     }
 }

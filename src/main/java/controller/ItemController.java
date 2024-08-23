@@ -14,12 +14,13 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping(value = "items")
+@RequestMapping(value = "/items")
 public class ItemController {
 
     @Autowired
     private ItemService itemService;
 
+    @GetMapping
     public ResponseEntity<List<ItemDto>> findAll(){
         List<Item> itemList = itemService.findAll();
         List<ItemDto> itemDtos = itemList.stream().map(ItemDto::new).collect(Collectors.toList());
