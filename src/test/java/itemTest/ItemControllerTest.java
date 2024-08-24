@@ -138,4 +138,23 @@ public class ItemControllerTest {
         result.andExpect(status().isNoContent());
         verify(itemService, times(1)).delete(itemId);
     }
+    @Test
+    public void testFilter() throws Exception{
+        Item item = new Item();
+        item.setId(1L);
+        item.setTitle("Item1");
+
+        when(itemService.getItemByStatusAndTaskList(anyString(), anyLong()))
+                .thenReturn(Collections.singletonList(item));
+
+        ResultActions result = mockMvc.perform(get("/items/filter")
+                        .param("status", "completed")
+                        .param("taskListId", "1")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(item.getId()))
+                .andExpect(jsonPath("$[0].title").value(item.getTitle()));
+    }
 }
