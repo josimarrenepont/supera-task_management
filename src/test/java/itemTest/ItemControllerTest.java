@@ -19,8 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -98,4 +97,17 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id").value(item.getId()))
                 .andExpect(jsonPath("$.title").value(item.getTitle()));
     }
+    @Test
+    public void testPrioritizeItem() throws Exception{
+        when(itemService.prioritizeItem(1L)).thenReturn(item);
+
+        ResultActions result = mockMvc.perform(put("/items/1/prioritize")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(item.getId()))
+                .andExpect(jsonPath("$.title").value(item.getTitle()));
+    }
+
 }
