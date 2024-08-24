@@ -18,6 +18,7 @@ import service.ItemService;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,6 +103,23 @@ public class ItemControllerTest {
         when(itemService.prioritizeItem(1L)).thenReturn(item);
 
         ResultActions result = mockMvc.perform(put("/items/1/prioritize")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(item.getId()))
+                .andExpect(jsonPath("$.title").value(item.getTitle()));
+    }
+    @Test
+    public void testUpdate() throws Exception{
+        Item item = new Item(1L, "Item1", false);
+        ItemDto itemDto = new ItemDto(item);
+        when(itemService.update(eq(1L), any(ItemDto.class))).thenReturn(item);
+
+        String itemJson = "{\"id\": 1, \"title\": \"Item1\", \"isHighlighted\": false}";
+
+        ResultActions result = mockMvc.perform(put("/items/1")
+                        .content(itemJson)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
