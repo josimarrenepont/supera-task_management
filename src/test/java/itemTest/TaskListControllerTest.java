@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import service.TaskListService;
 
@@ -55,5 +56,27 @@ public class TaskListControllerTest {
                 .andExpect(jsonPath("$[0].items[0].id").value(item.getId()))
                 .andExpect(jsonPath("$[0].items[0].title").value(item.getTitle()));
     }
-    
+    @Test public void itemsByTaskListsId() throws Exception{
+        List<Item> items = Collections.singletonList(item);
+        when(taskListService.getItemsByTaskListId(1L, null)).thenReturn(items);
+
+        mockMvc.perform(get("/taskList/1/items")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(item.getId()))
+                .andExpect(jsonPath("$[0].title").value(item.getTitle()));
+    }
+    @Test
+    public void testFindById() throws Exception{
+        when(taskListService.findById(1L)).thenReturn(taskList);
+
+        mockMvc.perform(get("/taskList/1")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(taskList.getId()))
+                .andExpect(jsonPath("$.title").value(taskList.getTitle()));
+    }
+
 }
