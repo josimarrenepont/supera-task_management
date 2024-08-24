@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -94,5 +95,23 @@ public class TaskListControllerTest {
                 .andExpect(jsonPath("$.id").value(taskList.getId()))
                 .andExpect(jsonPath("$.title").value(taskList.getTitle()));
     }
+    @Test
+    public void testUpdate() throws Exception{
+        Long id = 1L;
+        TaskList updatedTaskList = new TaskList();
+        updatedTaskList.setId(id);
+        updatedTaskList.setTitle("Updated TaskList");
+
+        when(taskListService.update(id, updatedTaskList)).thenReturn(updatedTaskList);
+
+        mockMvc.perform(put("/taskList/{id}", id)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"id\": 1, \"title\": \"Updated TaskList\", \"items\": []}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(updatedTaskList.getId()))
+                .andExpect(jsonPath("$.title").value(updatedTaskList.getTitle()));
+    }
+
 
 }
