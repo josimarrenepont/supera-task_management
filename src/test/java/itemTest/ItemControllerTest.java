@@ -66,4 +66,18 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id").value(item.getId()))
                 .andExpect(jsonPath("$.title").value(item.getTitle()));
     }
+    @Test
+    public void testFindItem() throws Exception{
+        List<Item> items = Collections.singletonList(item);
+        when(itemService.findItem("Item1")).thenReturn(items);
+
+        ResultActions result = mockMvc.perform(get("/items/findItem")
+                        .param("title", "Item1")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(item.getId()))
+                .andExpect(jsonPath("$[0].title").value(item.getTitle()));
+    }
 }
