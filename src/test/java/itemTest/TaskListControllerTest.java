@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -112,6 +112,15 @@ public class TaskListControllerTest {
                 .andExpect(jsonPath("$.id").value(updatedTaskList.getId()))
                 .andExpect(jsonPath("$.title").value(updatedTaskList.getTitle()));
     }
+    @Test
+    public void testDelete() throws Exception{
+        Long taskListId = 1L;
+        doNothing().when(taskListService).delete(taskListId);
 
+        mockMvc.perform(delete("/taskList/{id}", taskListId)
+                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNoContent());
 
+        verify(taskListService, times(1)).delete(taskListId);
+    }
 }
