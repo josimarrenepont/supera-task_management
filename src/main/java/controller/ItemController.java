@@ -74,5 +74,4 @@ public class ItemController {
                 .map(ItemDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(itemDtosList);
     }
-
 }

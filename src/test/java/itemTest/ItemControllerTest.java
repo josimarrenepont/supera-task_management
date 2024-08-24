@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -127,5 +127,15 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id").value(item.getId()))
                 .andExpect(jsonPath("$.title").value(item.getTitle()));
     }
+    @Test
+    public void testDelete() throws Exception{
+        Long itemId = 1L;
+        doNothing().when(itemService).delete(itemId);
 
+        ResultActions result = mockMvc.perform(delete("/items/{id}", itemId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isNoContent());
+        verify(itemService, times(1)).delete(itemId);
+    }
 }
