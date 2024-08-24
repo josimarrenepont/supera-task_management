@@ -2,6 +2,7 @@ package itemTest;
 
 import controller.ItemController;
 import entities.Item;
+import entities.dto.ItemDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,9 +20,11 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemControllerTest {
@@ -79,5 +82,20 @@ public class ItemControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(item.getId()))
                 .andExpect(jsonPath("$[0].title").value(item.getTitle()));
+    }
+    @Test
+    public void testInsert() throws Exception{
+        when(itemService.insert(any(ItemDto.class))).thenReturn(item);
+
+        String itemJson = "{\"id\": 1, \"title\": \"Item1\", \"isHighlighted\": false}";
+
+        ResultActions result = mockMvc.perform(post("/items")
+                        .content(itemJson)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(item.getId()))
+                .andExpect(jsonPath("$.title").value(item.getTitle()));
     }
 }
