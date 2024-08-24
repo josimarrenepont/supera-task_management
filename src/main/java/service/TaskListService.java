@@ -24,17 +24,6 @@ public class TaskListService {
     @Autowired
     private ItemRepository itemRepository;
 
-    public List<TaskList> getTaskLists(String title, Boolean prioritized){
-        if(title != null && prioritized != null){
-            return taskListRepository.findByTitleAndPrioritized(title, prioritized);
-        }else if(title != null){
-            return taskListRepository.findByTitle(title);
-        }else if(prioritized != null){
-            return taskListRepository.findByPrioritized(prioritized);
-        }else{
-            return taskListRepository.findAll();
-        }
-    }
     public List<Item> getItemsByTaskListId(Long taskListId, String status){
         if(status != null){
             return itemRepository.findByTaskListAndStatus(taskListId, status);

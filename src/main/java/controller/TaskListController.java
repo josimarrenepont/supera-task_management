@@ -18,12 +18,6 @@ public class TaskListController {
     @Autowired
     private TaskListService taskListService;
 
-    @GetMapping
-    public List<TaskList> getAllTaskLists(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) Boolean prioritized){
-        return taskListService.getTaskLists(title, prioritized);
-    }
     @GetMapping("/{id}/items")
     public List<Item> getItemsByTaskListsId(
             @PathVariable Long id, @RequestParam(required = false) String status){
