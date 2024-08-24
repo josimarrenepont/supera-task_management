@@ -36,7 +36,7 @@ public class TaskListController {
     @PostMapping
     public ResponseEntity<TaskList> insert(@RequestBody TaskList obj){
         TaskList taskList = taskListService.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(taskList.getId()).toUri();
         return ResponseEntity.created(uri).body(taskList);
     }
     @PutMapping(value = "/{id}")

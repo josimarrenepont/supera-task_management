@@ -18,6 +18,7 @@ import service.TaskListService;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -74,6 +75,21 @@ public class TaskListControllerTest {
         mockMvc.perform(get("/taskList/1")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(taskList.getId()))
+                .andExpect(jsonPath("$.title").value(taskList.getTitle()));
+    }
+    @Test
+    public void testInsert() throws Exception{
+        taskList.setId(1L);
+        taskList.setTitle("TaskList1");
+
+        when(taskListService.insert(any(TaskList.class))).thenReturn(taskList);
+
+        mockMvc.perform(post("/taskList")
+                    .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\": \"TaskList1\", \"items\": []}"))
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(taskList.getId()))
                 .andExpect(jsonPath("$.title").value(taskList.getTitle()));
