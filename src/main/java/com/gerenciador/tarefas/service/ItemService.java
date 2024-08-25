@@ -1,15 +1,15 @@
-package service;
+package com.gerenciador.tarefas.service;
 
-import entities.Item;
-import entities.dto.ItemDto;
+import com.gerenciador.tarefas.entities.Item;
+import com.gerenciador.tarefas.entities.dto.ItemDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import repository.ItemRepository;
-import service.exceptions.DatabaseExceptions;
-import service.exceptions.ResourceNotFoundExceptions;
+import com.gerenciador.tarefas.repository.ItemRepository;
+import com.gerenciador.tarefas.service.exceptions.DatabaseExceptions;
+import com.gerenciador.tarefas.service.exceptions.ResourceNotFoundExceptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +30,10 @@ public class ItemService {
         return obj.orElseThrow(() -> new ResourceNotFoundExceptions(id));
     }
 
-    public List<Item> findItem(String title) {
-        List<Item> itemList = itemRepository.findItem(title);
-        if (itemList.isEmpty()) {
-            return new ArrayList<>();
-        } else {
-            return itemList;
-        }
+    public List<Item> findByTitle(String title) {
+        return itemRepository.findByTitle(title);
     }
-
+    
     public Item insert(ItemDto itemDto) {
         Item item = new Item();
         item.setTitle(itemDto.getTitle());
@@ -71,17 +66,9 @@ public class ItemService {
             throw new DatabaseExceptions(e.getMessage());
         }
     }
-
     public Item prioritizeItem(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ResourceNotFoundExceptions(itemId));
         item.setHighlighted(true);
         return itemRepository.save(item);
-    }
-    public List<Item> getItemByStatusAndTaskList(String status, Long taskListsId){
-        try {
-            return itemRepository.findByTaskListAndStatus(taskListsId, status);
-        } catch(EmptyResultDataAccessException e){
-            throw new DatabaseExceptions(e.getMessage());
-        }
     }
 }

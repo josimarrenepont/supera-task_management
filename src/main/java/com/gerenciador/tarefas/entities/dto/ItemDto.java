@@ -1,7 +1,7 @@
-package entities.dto;
+package com.gerenciador.tarefas.entities.dto;
 
-import entities.Item;
-import entities.TaskList;
+import com.gerenciador.tarefas.entities.Item;
+import com.gerenciador.tarefas.entities.TaskList;
 
 import java.util.Set;
 

@@ -1,6 +1,6 @@
-package entities;
+package com.gerenciador.tarefas.entities;
 
-import entities.enums.ItemState;
+import com.gerenciador.tarefas.entities.enums.ItemState;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -20,17 +20,17 @@ public class Item implements Serializable {
 
     private boolean isHighlighted;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.PERSIST)
-    //@JoinTable(name = "taskList_items", joinColumns = @JoinColumn(name = "items_id"), inverseJoinColumns = @JoinColumn(name = "taskLists_id"))
-    @JoinColumn(name = "taskList_id")
+    @ManyToOne
+    @JoinColumn(name = "task_list_id")
     private TaskList taskList;
 
     public Item(){}
 
-    public Item(Long id, String title, boolean isHighlighted) {
+    public Item(Long id, String title, boolean isHighlighted, String status) {
         this.id = id;
         this.title = title;
         this.isHighlighted = isHighlighted;
+
     }
 
     public Long getId() {
@@ -63,6 +63,14 @@ public class Item implements Serializable {
 
     public void setTaskList(TaskList taskList) {
         this.taskList = taskList;
+    }
+
+    public ItemState getState() {
+        return state;
+    }
+
+    public void setState(ItemState state) {
+        this.state = state;
     }
 
     @Override

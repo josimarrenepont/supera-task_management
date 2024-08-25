@@ -1,12 +1,12 @@
-package controller;
+package com.gerenciador.tarefas.controller;
 
-import entities.Item;
-import entities.TaskList;
+import com.gerenciador.tarefas.entities.Item;
+import com.gerenciador.tarefas.entities.TaskList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import service.TaskListService;
+import com.gerenciador.tarefas.service.TaskListService;
 
 import java.net.URI;
 import java.util.List;
@@ -18,11 +18,6 @@ public class TaskListController {
     @Autowired
     private TaskListService taskListService;
 
-    @GetMapping("/{id}/items")
-    public List<Item> getItemsByTaskListsId(
-            @PathVariable Long id, @RequestParam(required = false) String status){
-        return taskListService.getItemsByTaskListId(id, status);
-    }
     @GetMapping
     public ResponseEntity<List<TaskList>> findAll(){
         List<TaskList> taskLists = taskListService.findAll();
@@ -49,5 +44,5 @@ public class TaskListController {
         taskListService.delete(id);
         return ResponseEntity.noContent().build();
     }
-    }
+}
 

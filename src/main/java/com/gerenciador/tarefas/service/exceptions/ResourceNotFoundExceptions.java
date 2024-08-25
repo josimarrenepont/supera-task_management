@@ -1,4 +1,4 @@
-package service.exceptions;
+package com.gerenciador.tarefas.service.exceptions;
 
 public class ResourceNotFoundExceptions extends RuntimeException{
     public ResourceNotFoundExceptions(Object id){

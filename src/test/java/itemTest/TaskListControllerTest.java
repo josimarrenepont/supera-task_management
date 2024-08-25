@@ -1,8 +1,8 @@
 package itemTest;
 
-import controller.TaskListController;
-import entities.Item;
-import entities.TaskList;
+import com.gerenciador.tarefas.controller.TaskListController;
+import com.gerenciador.tarefas.entities.Item;
+import com.gerenciador.tarefas.entities.TaskList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,9 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import service.TaskListService;
+import com.gerenciador.tarefas.service.TaskListService;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +39,7 @@ public class TaskListControllerTest {
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(taskListController).build();
-        item = new Item(1L, "Item1", true);
+        item = new Item(1L, "Item1", true, "ok");
         taskList = new TaskList(1L, "TaskList1", Collections.singleton(item));
     }
 
@@ -57,17 +56,6 @@ public class TaskListControllerTest {
                 .andExpect(jsonPath("$[0].title").value(taskList.getTitle()))
                 .andExpect(jsonPath("$[0].items[0].id").value(item.getId()))
                 .andExpect(jsonPath("$[0].items[0].title").value(item.getTitle()));
-    }
-    @Test public void itemsByTaskListsId() throws Exception{
-        List<Item> items = Collections.singletonList(item);
-        when(taskListService.getItemsByTaskListId(1L, null)).thenReturn(items);
-
-        mockMvc.perform(get("/taskList/1/items")
-                    .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(item.getId()))
-                .andExpect(jsonPath("$[0].title").value(item.getTitle()));
     }
     @Test
     public void testFindById() throws Exception{

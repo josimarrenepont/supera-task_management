@@ -1,16 +1,16 @@
-package service;
+package com.gerenciador.tarefas.service;
 
-import entities.Item;
-import entities.TaskList;
+import com.gerenciador.tarefas.entities.Item;
+import com.gerenciador.tarefas.entities.TaskList;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import repository.ItemRepository;
-import repository.TaskListRepository;
-import service.exceptions.DatabaseExceptions;
-import service.exceptions.ResourceNotFoundExceptions;
+import com.gerenciador.tarefas.repository.ItemRepository;
+import com.gerenciador.tarefas.repository.TaskListRepository;
+import com.gerenciador.tarefas.service.exceptions.DatabaseExceptions;
+import com.gerenciador.tarefas.service.exceptions.ResourceNotFoundExceptions;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +24,6 @@ public class TaskListService {
     @Autowired
     private ItemRepository itemRepository;
 
-    public List<Item> getItemsByTaskListId(Long taskListId, String status){
-        if(status != null){
-            return itemRepository.findByTaskListAndStatus(taskListId, status);
-        }else{
-            return itemRepository.findByTaskListId(taskListId);
-        }
-
-    }
-
     public List<TaskList> findAll() {
         return taskListRepository.findAll();
     }
@@ -43,11 +34,7 @@ public class TaskListService {
     }
 
     public TaskList insert(TaskList obj) {
-        TaskList taskList = new TaskList();
-        taskList.setTitle(obj.getTitle());
-        taskList.setItems(obj.getItems());
-
-        return taskListRepository.save(taskList);
+        return taskListRepository.save(obj);
     }
 
     public TaskList update(Long id, TaskList obj) {
@@ -74,4 +61,5 @@ public class TaskListService {
             throw new DatabaseExceptions(e.getMessage());
         }
     }
+
 }

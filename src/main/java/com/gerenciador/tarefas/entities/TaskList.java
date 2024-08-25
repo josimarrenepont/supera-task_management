@@ -1,4 +1,4 @@
-package entities;
+package com.gerenciador.tarefas.entities;
 
 import jakarta.persistence.*;
 

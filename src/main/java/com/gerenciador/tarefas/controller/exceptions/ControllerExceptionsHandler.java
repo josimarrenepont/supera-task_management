@@ -1,12 +1,12 @@
-package controller.exceptions;
+package com.gerenciador.tarefas.controller.exceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import service.exceptions.DatabaseExceptions;
-import service.exceptions.ResourceNotFoundExceptions;
+import com.gerenciador.tarefas.service.exceptions.DatabaseExceptions;
+import com.gerenciador.tarefas.service.exceptions.ResourceNotFoundExceptions;
 
 import java.time.Instant;
 

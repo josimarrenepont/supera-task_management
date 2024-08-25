@@ -1,8 +1,8 @@
 package itemTest;
 
-import controller.ItemController;
-import entities.Item;
-import entities.dto.ItemDto;
+import com.gerenciador.tarefas.controller.ItemController;
+import com.gerenciador.tarefas.entities.Item;
+import com.gerenciador.tarefas.entities.dto.ItemDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import service.ItemService;
+import com.gerenciador.tarefas.service.ItemService;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ public class ItemControllerTest {
     @BeforeEach
     public void setUp(){
         mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
-        item = new Item(1L, "Item1", false);
+        item = new Item(1L, "Item1", false, "ok");
     }
 
     @Test
@@ -72,9 +72,9 @@ public class ItemControllerTest {
     @Test
     public void testFindItem() throws Exception{
         List<Item> items = Collections.singletonList(item);
-        when(itemService.findItem("Item1")).thenReturn(items);
+        when(itemService.findByTitle("Item1")).thenReturn(items);
 
-        ResultActions result = mockMvc.perform(get("/items/findItem")
+        ResultActions result = mockMvc.perform(get("/items/findByTitle")
                         .param("title", "Item1")
                 .contentType(MediaType.APPLICATION_JSON));
 
@@ -112,7 +112,7 @@ public class ItemControllerTest {
     }
     @Test
     public void testUpdate() throws Exception{
-        Item item = new Item(1L, "Item1", false);
+        Item item = new Item(1L, "Item1", false, "ok");
         ItemDto itemDto = new ItemDto(item);
         when(itemService.update(eq(1L), any(ItemDto.class))).thenReturn(item);
 
@@ -137,24 +137,5 @@ public class ItemControllerTest {
 
         result.andExpect(status().isNoContent());
         verify(itemService, times(1)).delete(itemId);
-    }
-    @Test
-    public void testFilter() throws Exception{
-        Item item = new Item();
-        item.setId(1L);
-        item.setTitle("Item1");
-
-        when(itemService.getItemByStatusAndTaskList(anyString(), anyLong()))
-                .thenReturn(Collections.singletonList(item));
-
-        ResultActions result = mockMvc.perform(get("/items/filter")
-                        .param("status", "completed")
-                        .param("taskListId", "1")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        result.andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(item.getId()))
-                .andExpect(jsonPath("$[0].title").value(item.getTitle()));
     }
 }

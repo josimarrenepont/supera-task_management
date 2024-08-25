@@ -1,4 +1,4 @@
-package controller.exceptions;
+package com.gerenciador.tarefas.controller.exceptions;
 
 import java.io.Serializable;
 import java.time.Instant;

@@ -1,4 +1,4 @@
-package entities.enums;
+package com.gerenciador.tarefas.entities.enums;
 
 public enum ItemState {
     TODO,

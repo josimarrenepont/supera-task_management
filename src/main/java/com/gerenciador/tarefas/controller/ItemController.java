@@ -1,17 +1,15 @@
-package controller;
+package com.gerenciador.tarefas.controller;
 
-import entities.Item;
-import entities.dto.ItemDto;
+import com.gerenciador.tarefas.entities.Item;
+import com.gerenciador.tarefas.entities.dto.ItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import service.ItemService;
+import com.gerenciador.tarefas.service.ItemService;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
-
-
 
 @RestController
 @RequestMapping(value = "/items")
@@ -27,14 +25,14 @@ public class ItemController {
         return ResponseEntity.ok().body(itemDtos);
     }
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> findById(@PathVariable Long id){
+    public ResponseEntity<ItemDto> findById(@PathVariable Long id){
         Item obj = itemService.findById(id);
         ItemDto itemDto = new ItemDto(obj);
         return ResponseEntity.ok().body(itemDto);
     }
-    @GetMapping(value = "/findItem")
-    public ResponseEntity<List<ItemDto>> findItem(@RequestParam String title){
-        List<Item> itemList = itemService.findItem(title);
+    @GetMapping(value = "/findByTitle")
+    public ResponseEntity<List<ItemDto>> findByTitle(@RequestParam String title){
+        List<Item> itemList = itemService.findByTitle(title);
         ResponseEntity<List<ItemDto>> responseEntity;
         if (itemList.isEmpty()){
            responseEntity = ResponseEntity.noContent().build();
@@ -47,7 +45,7 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<ItemDto> insert(@RequestBody ItemDto itemDto){
         Item item = itemService.insert(itemDto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id").buildAndExpand(item.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(item.getId()).toUri();
         return ResponseEntity.created(uri).body(new ItemDto(item));
     }
     @PutMapping("/{id}/prioritize")
@@ -66,12 +64,5 @@ public class ItemController {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         itemService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-    @GetMapping(value = "/filter")
-    public ResponseEntity<List<ItemDto>> filterItems(@RequestParam String status, @RequestParam Long taskListId){
-        List<Item> itemList = itemService.getItemByStatusAndTaskList(status, taskListId);
-        List<ItemDto> itemDtosList = itemList.stream()
-                .map(ItemDto::new).collect(Collectors.toList());
-        return ResponseEntity.ok().body(itemDtosList);
     }
 }
