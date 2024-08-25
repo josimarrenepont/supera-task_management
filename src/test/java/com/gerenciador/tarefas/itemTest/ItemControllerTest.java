@@ -1,4 +1,4 @@
-package itemTest;
+package com.gerenciador.tarefas.itemTest;
 
 import com.gerenciador.tarefas.controller.ItemController;
 import com.gerenciador.tarefas.entities.Item;
@@ -70,7 +70,7 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.title").value(item.getTitle()));
     }
     @Test
-    public void testFindItem() throws Exception{
+    public void findByTitle() throws Exception{
         List<Item> items = Collections.singletonList(item);
         when(itemService.findByTitle("Item1")).thenReturn(items);
 

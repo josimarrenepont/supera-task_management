@@ -33,7 +33,7 @@ public class ItemService {
     public List<Item> findByTitle(String title) {
         return itemRepository.findByTitle(title);
     }
-    
+
     public Item insert(ItemDto itemDto) {
         Item item = new Item();
         item.setTitle(itemDto.getTitle());

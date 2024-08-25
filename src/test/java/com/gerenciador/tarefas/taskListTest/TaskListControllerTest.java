@@ -1,4 +1,4 @@
-package itemTest;
+package com.gerenciador.tarefas.taskListTest;
 
 import com.gerenciador.tarefas.controller.TaskListController;
 import com.gerenciador.tarefas.entities.Item;
