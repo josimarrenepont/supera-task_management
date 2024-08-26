@@ -4,6 +4,7 @@ import com.gerenciador.tarefas.entities.Item;
 import com.gerenciador.tarefas.entities.dto.ItemDto;
 import com.gerenciador.tarefas.repository.ItemRepository;
 import com.gerenciador.tarefas.service.ItemService;
+import com.gerenciador.tarefas.service.exceptions.DatabaseExceptions;
 import com.gerenciador.tarefas.service.exceptions.ResourceNotFoundExceptions;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,7 +73,7 @@ public class ItemServiceTest {
     @Test
     public void testFindByTitle(){
         Item item1 = new Item(1L, "Item1", false, "TODO");
-        Item item2 = new Item(2L, "Item2", false, "TODO");
+        Item item2 = new Item(2L, "Item1", false, "TODO");
 
         when(itemRepository.findByTitle("Item1")).thenReturn(Arrays.asList(item1,item2));
 
@@ -78,7 +81,7 @@ public class ItemServiceTest {
 
         assertEquals(2, result.size());
         assertEquals("Item1", result.get(0).getTitle());
-        assertEquals("Item2", result.get(1).getTitle());
+        assertEquals("Item1", result.get(1).getTitle());
     }
     @Test
     public void testInsert(){
@@ -94,7 +97,7 @@ public class ItemServiceTest {
     public void testUpdate(){
         Item updateItem = new Item(1L, "Item1", true, "TODO");
         ItemDto itemDto = new ItemDto();
-        itemDto.setTitle("Item1");
+        itemDto.setTitle("Item1 update");
         itemDto.setHighlighted(true);
 
         when(itemRepository.getReferenceById(1L)).thenReturn(updateItem);
@@ -116,5 +119,35 @@ public class ItemServiceTest {
         });
 
         verify(itemRepository, never()).save(any(Item.class));
+    }
+    @Test
+    public void testDelete(){
+        Long itemId = 1L;
+
+        doNothing().when(itemRepository).deleteById(itemId);
+
+        itemService.delete(itemId);
+        verify(itemRepository).deleteById(itemId);
+    }
+    @Test
+    public void testDeleteResourceNotFound(){
+        Long itemId = 1L;
+
+        doThrow(new EmptyResultDataAccessException(1)).when(itemRepository).deleteById(itemId);
+        assertThrows(ResourceNotFoundExceptions.class, () -> {
+            itemService.delete(itemId);
+        });
+        verify(itemRepository).deleteById(itemId);
+    }
+    @Test
+    public void testDeleteDatabaseException(){
+        Long itemId = 1L;
+
+        doThrow(new DataIntegrityViolationException("Integrity Violation"))
+                .when(itemRepository).deleteById(itemId);
+        assertThrows(DatabaseExceptions.class, () -> {
+            itemService.delete(itemId);
+        });
+        verify(itemRepository).deleteById(itemId);
     }
 }
