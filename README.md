@@ -1,9 +1,6 @@
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/josimarrenepont/supera-task_management/blob/main/LICENSE)
 # Sistema de Gerenciamento de Tarefas
 
-## Introdução
-O Sistema de Gerenciamento de Tarefas é uma aplicação web desenvolvida para permitir aos usuários gerenciar suas listas e itens de forma eficiente. Utiliza tecnologias como Java, Spring Boot para o backend e React para o frontend.
-
 ## Visão Geral do Projeto
 A aplicação permite a criação e gerenciamento de listas de tarefas, adição, edição, remoção e organização de itens, além de oferecer opções de filtragem e destaque de itens prioritários.
 
